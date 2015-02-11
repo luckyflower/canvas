@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>文字创建</title>
+	<style>
+	body{background-color: #ddd;}
+	#canvas{margin: 10px; padding: 10px; background-color: #fff; border: thin inset #aaa;}
+	</style>
+</head>
+<body>
+	<!-- canvas元素实际有两套尺寸，一个是元素本事的大小，一个是元素绘图表面的大小
+	设置元素的width和height属性，是同时修改两套属性
+	如果是通过css设置，只会改变元素本身，而不会影响到绘图表面 -->
+	<canvas id="canvas" width="600" height="300">你的浏览器不支持canvas</canvas>
+</body>
+<script>
+	//canvas元素的方法：返回绘图环境对象getContent() 返回一个数据地址toDataUrl() 创建表示canvas元素图像文件的Blob toBlob()
+	var canvas = document.getElementById('canvas'),
+		context = canvas.getContext('2d');
+
+	context.font = '24px 微软雅黑';
+	context.fillStyle = 'red';//文字填充颜色
+	context.strokeStyle = 'blue';//文字描边颜色
+	context.fillText('你好',canvas.width/2,canvas.height/2);
+	context.strokeText('你好',canvas.width/2,canvas.height/2);
+</script>
+</html>

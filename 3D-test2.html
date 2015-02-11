@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<style> 
+	html {overflow:hidden}
+	body {position: absolute; margin:0; padding:0;width:100%; height:100%}
+	canvas {display:block;border:2px solid #ccc; margin:10px auto;}
+	p {text-align: center; font-size:12px;color:#454545;}
+</style>
+<script src="http://hongru.github.com/js/JCanvas.js" ></script> 
+<canvas id="canvas" width="600" height="400"></canvas>
+<p></p>
+<script> 
+	var canvas = document.getElementById('canvas');
+	var stage = new Stage(canvas);
+	var createBall = function (radius) {//创建一个圆
+		radius = (radius === undefined) ? 20 : radius;
+		return new Sprite(stage.ctx, {
+			x: 0,
+			y: 0,
+			width: radius*2,
+			draw: function () { 
+				this.ctx.beginPath();
+				this.ctx.arc(0, 0, this.width/2, 0, Math.PI*2, true);
+				this.ctx.closePath();
+				this.ctx.fillStyle = 'rgba(0,0,0,'+ Math.min(1, this.width/(2*radius)) +')';
+				this.ctx.fill();
+			}
+		});
+	};
+ 
+	var initialize = function () {
+		var focalLength = 250,
+			ballR = 20,//小球的半径
+			ballN = 20,//小球的数量
+			balls = [],
+			vpx = 0,
+			vpy = 0,
+			angleY = 0;
+ 
+		for (var i=0; i<ballN; i++) {//创建ballN个小球
+			var ball = createBall(ballR);
+			stage.addChild(ball);
+			//小球的随机位置
+			ball.xpos = Math.random() * 200 - 100;
+			ball.ypos = Math.random() * 200 - 100;
+			ball.zpos = Math.random() * 200 - 100;
+			balls.push(ball);
+		}
+		//定义旋转原点 画布中间
+		vpx = canvas.width/2;
+		vpy = canvas.height/2;
+ 
+ 		//鼠标经过的时候 鼠标的xy坐标位置相对于canvas舞台
+		stage.addEventListener('mousemove', function (x, y) {
+			//让旋转速度和角度和鼠标位置挂上关系
+			angleY = (x - vpx) * .001;//旋转速度于鼠标距离旋转点的距离成正比 区间为(-0.3,0.3)
+		});
+		
+		//绕y轴变化，得出新的x，z坐标
+		function rotateY(ball, angleY) {
+			var cosy = Math.cos(angleY),
+				siny = Math.sin(angleY),
+				x1 = ball.xpos * cosy - ball.zpos * siny,
+				z1 = ball.zpos * cosy + ball.xpos * siny;
+			ball.xpos = x1;
+			ball.zpos = z1;
+ 			// focalLength 表示当前焦距，一般可设为一个常量
+ 			// 把z方向扁平化
+			var scale = focalLength / (focalLength + ball.zpos);
+			ball.x = vpx + ball.xpos * scale;
+			ball.y = vpy + ball.ypos * scale;
+			ball.width = ballR*2*scale;
+		}
+ 
+		stage.onRefresh = function () { 
+			for (var i=0,ball; ball=balls[i]; i++) { rotateY(ball, angleY) }
+		}
+ 
+		stage.start();
+	};
+ 
+	onload = initialize;
+ 
+ 
+</script>
+</html> 
+ 

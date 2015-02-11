@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>雪花例子</title>
+	<style>
+	*{
+		padding: 0;
+		margin: 0;
+	}
+	body{
+		background-color: #000;
+	}
+	canvas{
+		display: block;
+	}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+</body>
+<script>
+var canvas  = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+var chinese =  "田由甲申甴电甶男甸甹町画甼甽甾甿畀畁畂畃畄畅畆畇畈畉畊畋界畍畎畏畐畑";
+chinese = chinese.split("");
+
+var font_size = 10;
+var columns = canvas.width/font_size;
+var drops = [];
+for(var x=0;x<columns;x++){
+	drops[x]=1;
+}
+function draw(){
+	//每循环一次draw()函数，画出一行字
+	ctx.fillStyle = "rgba(0,0,0,0.05)";//覆盖透明背景，使文字呈现渐隐的样子
+	ctx.fillRect(0,0,canvas.width,canvas.height);
+
+	ctx.fillStyle = "#0f0";
+	ctx.font = font_size + "px arial";
+	//在这次循环中"i*font_size"文字的x坐标逐渐增加，"drops[i]*font_size"文字的y坐标不变
+	for(var i=0;i<drops.length;i++){
+		var text = chinese[Math.floor(Math.random()*chinese.length)];
+		//context.fillText(text,x,y,maxWidth);文字/x坐标/y坐标/最大文本宽度
+		ctx.fillText(text,i*font_size,drops[i]*font_size);
+		if(drops[i]*font_size>canvas.height&&Math.random()>0.975){//当文字到达窗口底部的时候 随机让文字从头开始或者继续向下
+			drops[i]=0;
+		}
+		drops[i]++;//下次循环中每个drops[i]的值加1，所以每一行文字会下移
+	}
+}
+draw();
+setInterval(draw,33);
+</script>
+</html>
